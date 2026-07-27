@@ -1,3 +1,4 @@
 clickhouse_connect
 sentense_transformers
 gradio
+dotenv

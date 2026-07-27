@@ -1,12 +1,30 @@
 import gradio as gr
 from sentence_transformers import SentenceTransformer
 import sys
-
+from dotenv import load_dotenv
+import os
 
 import clickhouse_connect
 
+load_dotenv()
+
+db_host = os.getenv("DATABASE_HOST")
+db_user = os.getenv("DATABASE_USER")
+db_pass = os.getenv("DATABASE_PASS")
+deepseek_token = os.getenv("DEEPSEEK_TOKEN")
+
+model=SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+chclient = clickhouse_connect.get_client(host=db_host,username=db_user,password=db_pass)
+
 # Search query
 def search_query(query):
+    if not query:
+        return "Please enter a search term."
+    embeddings = model.encode([query])
+    params = {'v1':list(embeddings[0]), 'v2':20}
+    rows = chclient.query("SELECT id, title, text FROM hackernews ORDER BY cosineDistance(vector, %(v1)s) LIMIT %(v2)s", parameters=params)
+    if rows:
+      return "\n".join(rows)
     return "No matches found."
 
 
@@ -18,9 +36,6 @@ demo = gr.Interface(
     description="Type a word to search the local database."
 )
 
-model=SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-
-chclient = clickhouse_connect.get_client() #
 
 
 if __name__ == "__main__":
