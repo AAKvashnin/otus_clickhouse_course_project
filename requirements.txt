@@ -2,3 +2,5 @@ clickhouse_connect
 sentense_transformers
 gradio
 dotenv
+langchain
+langchain-deepseek

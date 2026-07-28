@@ -11,7 +11,7 @@ load_dotenv()
 db_host = os.getenv("DATABASE_HOST")
 db_user = os.getenv("DATABASE_USER")
 db_pass = os.getenv("DATABASE_PASS")
-deepseek_token = os.getenv("DEEPSEEK_TOKEN")
+deepseek_token = os.getenv("DEEPSEEK_API_KEY")
 
 model=SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 chclient = clickhouse_connect.get_client(host=db_host,username=db_user,password=db_pass)
@@ -22,10 +22,11 @@ def search_query(query):
         return "Please enter a search term."
     embeddings = model.encode([query])
     params = {'v1':list(embeddings[0]), 'v2':20}
-    rows = chclient.query("SELECT id, title, text FROM hackernews ORDER BY cosineDistance(vector, %(v1)s) LIMIT %(v2)s", parameters=params)
-    if rows:
-      return "\n".join(rows)
-    return "No matches found."
+    result = chclient.query("SELECT id, title, text FROM hackernews ORDER BY cosineDistance(vector, %(v1)s) LIMIT %(v2)s", parameters=params)
+    if len(result.result_rows):
+      return "\n".join(result.result_rows)
+    else:
+      return "No matches found."
 
 
 demo = gr.Interface(
