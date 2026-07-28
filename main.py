@@ -23,8 +23,11 @@ def search_query(query):
     embeddings = model.encode([query])
     params = {'v1':list(embeddings[0]), 'v2':20}
     result = chclient.query("SELECT id, title, text FROM hackernews ORDER BY cosineDistance(vector, %(v1)s) LIMIT %(v2)s", parameters=params)
-    if len(result.result_rows):
-      return "\n".join(result.result_rows)
+    doc_results = ""
+    for row in result.result_rows:
+        doc_results = doc_results + "\n" + row[2]
+    if doc_results!="":
+      return doc_results    
     else:
       return "No matches found."
 
