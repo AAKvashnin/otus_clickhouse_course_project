@@ -33,16 +33,13 @@ def search_query(query):
     else:
       return "",doc_results
 
-
-demo = gr.Interface(
-    fn=search_query,
-    inputs=gr.Textbox(label="Enter search term"),
-    outputs=[gr.Textbox(label="Search summary"),gr.Dataframe(label="Search Results")],
-    layout="vertical",
-    title="Hackernews Search App",
-    description="Type a word to search the local database."
-)
-
+with gr.Blocks() as demo:
+   with gr.Column(title="Hackernews Search App"):
+        in_box = gr.Textbox(label="Enter search term")
+        btn = gr.Button("Search")
+        out_text = gr.Textbox(label="Searcg summary")
+        out_table=gr.Dataframe(label="Search Results")
+        btn.click(fn=search_query, inputs=in_box, outputs=[out_text,out_table])
 
 
 if __name__ == "__main__":
