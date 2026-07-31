@@ -38,6 +38,7 @@ demo = gr.Interface(
     fn=search_query,
     inputs=gr.Textbox(label="Enter search term"),
     outputs=[gr.Textbox(label="Search summary"),gr.Dataframe(label="Search Results")],
+    rtl=False,
     title="Hackernews Search App",
     description="Type a word to search the local database."
 )
