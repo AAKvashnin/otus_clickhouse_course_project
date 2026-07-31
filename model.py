@@ -4,7 +4,7 @@ from langchain_core.output_parsers import StrOutputParser
 
 def summarize_text(text_to_summarize: str) -> str:
 
-  model = ChatDeepSeek(
+  llm = ChatDeepSeek(
     model="deepseek-chat", 
     temperature=0.3,
     max_tokens=500
