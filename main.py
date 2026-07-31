@@ -37,7 +37,7 @@ with gr.Blocks(title="Hackernews Search App") as demo:
    with gr.Column():
         in_box = gr.Textbox(label="Enter search term")
         btn = gr.Button("Search")
-        out_text = gr.Textbox(label="Searcg summary")
+        out_text = gr.Textbox(label="Search summary")
         out_table=gr.Dataframe(label="Search Results")
         btn.click(fn=search_query, inputs=in_box, outputs=[out_text,out_table])
 
