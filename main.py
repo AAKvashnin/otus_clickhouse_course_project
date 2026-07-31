@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 
 import clickhouse_connect
+from model import summarize_text
 
 load_dotenv()
 
@@ -27,16 +28,16 @@ def search_query(query):
     for row in result.result_rows:
         doc_results = doc_results + "\n" + row[2]
     if doc_results!="":
-      return doc_results    
+      return summarize_text(doc_results),doc_results    
     else:
-      return "No matches found."
+      return "","No matches found."
 
 
 demo = gr.Interface(
     fn=search_query,
     inputs=gr.Textbox(label="Enter search term"),
-    outputs=gr.Textbox(label="Search Results"),
-    title="Simple Search App",
+    outputs=[gr.Textbox(label="Search summary"),gr.Textbox(label="Search Results")],
+    title="Hackernews Search App",
     description="Type a word to search the local database."
 )
 
