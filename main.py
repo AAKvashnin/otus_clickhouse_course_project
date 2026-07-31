@@ -24,19 +24,20 @@ def search_query(query):
     embeddings = model.encode([query])
     params = {'v1':list(embeddings[0]), 'v2':20}
     result = chclient.query("SELECT id, title, text FROM hackernews ORDER BY cosineDistance(vector, %(v1)s) LIMIT %(v2)s", parameters=params)
-    doc_results = ""
+    doc_results = []
     for row in result.result_rows:
-        doc_results = doc_results + "\n" + row[2]
-    if doc_results!="":
-      return summarize_text(doc_results),doc_results    
+        doc_results.append(row[2])
+    if len(doc_results)>0:
+      text_to_sum="\n".join(doc_results)
+      return summarize_text(text_to_sum),doc_results    
     else:
-      return "","No matches found."
+      return "",doc_results
 
 
 demo = gr.Interface(
     fn=search_query,
     inputs=gr.Textbox(label="Enter search term"),
-    outputs=[gr.Textbox(label="Search summary"),gr.Textbox(label="Search Results")],
+    outputs=[gr.Textbox(label="Search summary"),gr.Dataframe(label="Search Results")],
     title="Hackernews Search App",
     description="Type a word to search the local database."
 )
