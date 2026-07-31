@@ -33,8 +33,8 @@ def search_query(query):
     else:
       return "",doc_results
 
-with gr.Blocks() as demo:
-   with gr.Column(title="Hackernews Search App"):
+with gr.Blocks(title="Hackernews Search App") as demo:
+   with gr.Column():
         in_box = gr.Textbox(label="Enter search term")
         btn = gr.Button("Search")
         out_text = gr.Textbox(label="Searcg summary")
