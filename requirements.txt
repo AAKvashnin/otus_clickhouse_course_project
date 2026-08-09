@@ -4,3 +4,5 @@ gradio
 dotenv
 langchain
 langchain-deepseek
+matplotlib
+notebook
