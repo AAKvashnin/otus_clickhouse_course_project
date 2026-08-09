@@ -24,8 +24,8 @@ def search_query(query):
     if not query:
         return "Please enter a search term."
     embeddings = model.encode([query])
-    params = {'v1':table, 'v2':distance_function, 'v3':list(embeddings[0]), 'v4':20}
-    result = chclient.query("SELECT id, title, text FROM %(v1)s ORDER BY %(v2)s(vector, %(v3)s) LIMIT %(v4)s", parameters=params)
+    params = {'v1':list(embeddings[0]), 'v2':20}
+    result = chclient.query("SELECT id, title, text FROM "+table+" ORDER BY "+distance_function+"(vector, %(v1)s) LIMIT %(v2)s", parameters=params)
     doc_results = []
     for row in result.result_rows:
         doc_results.append(row[2])
