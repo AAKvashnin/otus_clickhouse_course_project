@@ -27,3 +27,61 @@ ALTER TABLE hackernews ADD INDEX vector_index vector TYPE vector_similarity('hns
 
 ALTER TABLE hackernews MATERIALIZE INDEX vector_index SETTINGS mutations_sync = 2;
 
+CREATE TABLE hackernews2
+(
+    `id` Int32,
+    `doc_id` Int32,
+    `text` String,
+    `vector` Array(Float32),
+    `node_info` Tuple(
+        start Nullable(UInt64),
+        end Nullable(UInt64)),
+    `metadata` String,
+    `type` Enum8('story' = 1, 'comment' = 2, 'poll' = 3, 'pollopt' = 4, 'job' = 5),
+    `by` LowCardinality(String),
+    `time` DateTime,
+    `title` String,
+    `post_score` Int32,
+    `dead` UInt8,
+    `deleted` UInt8,
+    `length` UInt32
+)
+ENGINE = MergeTree
+ORDER BY id;
+
+INSERT INTO hackernews2 SELECT * FROM hackernews;
+
+ALTER TABLE hackernews2 ADD INDEX vector_index2 vector TYPE vector_similarity('hnsw', 'L2Distance', 384, 'bf16', 64, 512);
+
+ALTER TABLE hackernews2 MATERIALIZE INDEX vector_index2 SETTINGS mutations_sync = 2;
+
+CREATE TABLE hackernews3
+(
+    `id` Int32,
+    `doc_id` Int32,
+    `text` String,
+    `vector` Array(Float32),
+    `node_info` Tuple(
+        start Nullable(UInt64),
+        end Nullable(UInt64)),
+    `metadata` String,
+    `type` Enum8('story' = 1, 'comment' = 2, 'poll' = 3, 'pollopt' = 4, 'job' = 5),
+    `by` LowCardinality(String),
+    `time` DateTime,
+    `title` String,
+    `post_score` Int32,
+    `dead` UInt8,
+    `deleted` UInt8,
+    `length` UInt32
+)
+ENGINE = MergeTree
+ORDER BY id;
+
+INSERT INTO hackernews3 SELECT * FROM hackernews;
+
+
+
+
+
+
+

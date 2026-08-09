@@ -13,6 +13,8 @@ db_host = os.getenv("DATABASE_HOST")
 db_user = os.getenv("DATABASE_USER")
 db_pass = os.getenv("DATABASE_PASS")
 deepseek_token = os.getenv("DEEPSEEK_API_KEY")
+table = os.getenv("TABLE_NAME")
+distance_function=os.getenv("DISTANCE_FUNCTION")
 
 model=SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
 chclient = clickhouse_connect.get_client(host=db_host,username=db_user,password=db_pass)
@@ -22,8 +24,8 @@ def search_query(query):
     if not query:
         return "Please enter a search term."
     embeddings = model.encode([query])
-    params = {'v1':list(embeddings[0]), 'v2':20}
-    result = chclient.query("SELECT id, title, text FROM hackernews ORDER BY cosineDistance(vector, %(v1)s) LIMIT %(v2)s", parameters=params)
+    params = {'v1':table, 'v2':distance_function, 'v3':list(embeddings[0]), 'v4':20}
+    result = chclient.query("SELECT id, title, text FROM %(v1)s ORDER BY %(v2)s(vector, %(v3)s) LIMIT %(v4)s", parameters=params)
     doc_results = []
     for row in result.result_rows:
         doc_results.append(row[2])
